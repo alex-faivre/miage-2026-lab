@@ -6,7 +6,7 @@ set -euo pipefail
 
 CLUSTER_PREFIX="miage-lab"
 IMAGE="images:debian/bookworm"
-K3S_VERSION="v1.31.5+k3s1"
+K3S_VERSION="v1.34.4+k3s1"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(dirname "$SCRIPT_DIR")"
 
@@ -41,7 +41,7 @@ else
   done
 fi
 
-SERVER_IP=$(incus exec ${CLUSTER_PREFIX}-server -- ip -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+SERVER_IP=$(incus exec ${CLUSTER_PREFIX}-server -- ip -4 addr show eth0 | awk '/inet / {split($2, a, "/"); print a[1]}')
 echo "    Server IP: ${SERVER_IP}"
 
 # --- Install K3S server ---
@@ -102,7 +102,8 @@ incus exec ${CLUSTER_PREFIX}-server -- bash -c "
   fi
 
   export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-  cilium install --version 1.16.6 --set routingMode=native --set ipv4NativeRoutingCIDR=10.42.0.0/16 --set kubeProxyReplacement=true
+  SERVER_IP=\$(ip -4 addr show eth0 | awk '/inet / {split(\$2, a, \"/\"); print a[1]}')
+  cilium install --set routingMode=native --set ipv4NativeRoutingCIDR=10.42.0.0/16 --set kubeProxyReplacement=true --set k8sServiceHost=\${SERVER_IP} --set k8sServicePort=6443
   echo 'Waiting for Cilium to be ready...'
   cilium status --wait
 "
