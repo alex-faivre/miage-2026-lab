@@ -1,0 +1,63 @@
+authentik:
+  secret_key: "${AUTHENTIK_SECRET_KEY}"
+  error_reporting:
+    enabled: false
+  postgresql:
+    password: "${AUTHENTIK_PG_PASSWORD}"
+
+server:
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - auth.kube.cloud-factory.co
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 512Mi
+
+worker:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 1Gi
+
+postgresql:
+  enabled: true
+  auth:
+    username: authentik
+    database: authentik
+    password: "${AUTHENTIK_PG_PASSWORD}"
+    postgresPassword: "${AUTHENTIK_PG_PASSWORD}"
+  primary:
+    persistence:
+      enabled: true
+      size: 2Gi
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 512Mi
+
+redis:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: false
+  master:
+    persistence:
+      enabled: true
+      size: 1Gi
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        memory: 128Mi

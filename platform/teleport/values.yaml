@@ -1,0 +1,23 @@
+chartMode: standalone
+
+clusterName: teleport.kube.cloud-factory.co
+proxyListenerMode: multiplex
+
+persistence:
+  enabled: true
+  size: 2Gi
+
+highAvailability:
+  replicaCount: 1
+
+service:
+  type: NodePort
+  spec:
+    externalTrafficPolicy: Local
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 512Mi

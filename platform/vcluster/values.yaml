@@ -1,0 +1,13 @@
+sync:
+  toHost:
+    ingresses:
+      enabled: true
+
+controlPlane:
+  statefulSet:
+    resources:
+      requests:
+        cpu: 200m
+        memory: 256Mi
+      limits:
+        memory: 1Gi
