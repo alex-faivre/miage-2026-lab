@@ -3,6 +3,8 @@ chartMode: standalone
 clusterName: teleport.kube.cloud-factory.co
 proxyListenerMode: multiplex
 
+kubeClusterName: miage-lab
+
 persistence:
   enabled: true
   size: 2Gi

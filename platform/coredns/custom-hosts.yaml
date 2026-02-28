@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-custom
+  namespace: kube-system
+data:
+  kube-cloud-factory.server: |
+    kube.cloud-factory.co:53 {
+      hosts {
+        __TRAEFIK_CLUSTER_IP__ auth.kube.cloud-factory.co
+        __TRAEFIK_CLUSTER_IP__ argocd.kube.cloud-factory.co
+        __TRAEFIK_CLUSTER_IP__ teleport.kube.cloud-factory.co
+      }
+    }

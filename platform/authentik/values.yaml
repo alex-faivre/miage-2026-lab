@@ -5,6 +5,13 @@ authentik:
   postgresql:
     password: "${AUTHENTIK_PG_PASSWORD}"
 
+global:
+  env:
+    - name: AUTHENTIK_BOOTSTRAP_PASSWORD
+      value: "${AUTHENTIK_BOOTSTRAP_PASSWORD}"
+    - name: AUTHENTIK_BOOTSTRAP_TOKEN
+      value: "${AUTHENTIK_BOOTSTRAP_TOKEN}"
+
 server:
   ingress:
     enabled: true
