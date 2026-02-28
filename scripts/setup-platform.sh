@@ -8,9 +8,24 @@ CONTAINER="${1:-miage-lab-server}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(dirname "$SCRIPT_DIR")"
 
+# --- Load secrets from .env ---
+ENV_FILE="${REPO_DIR}/.env"
+if [ ! -f "$ENV_FILE" ]; then
+  echo "ERROR: .env file not found. Copy .env.example to .env and fill in secrets."
+  echo "  cp ${REPO_DIR}/.env.example ${REPO_DIR}/.env"
+  exit 1
+fi
+set -a
+source "$ENV_FILE"
+set +a
+
 push_values() {
   local component="$1"
-  incus file push "${REPO_DIR}/platform/${component}/values.yaml" "${CONTAINER}/opt/platform/${component}/values.yaml" --create-dirs
+  local tmpfile
+  tmpfile=$(mktemp)
+  envsubst < "${REPO_DIR}/platform/${component}/values.yaml" > "$tmpfile"
+  incus file push "$tmpfile" "${CONTAINER}/opt/platform/${component}/values.yaml" --create-dirs
+  rm -f "$tmpfile"
 }
 
 helm_cmd() {
