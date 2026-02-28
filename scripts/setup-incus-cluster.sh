@@ -103,7 +103,8 @@ incus exec ${CLUSTER_PREFIX}-server -- bash -c "
 
   export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
   SERVER_IP=\$(ip -4 addr show eth0 | awk '/inet / {split(\$2, a, \"/\"); print a[1]}')
-  cilium install --set routingMode=native --set ipv4NativeRoutingCIDR=10.42.0.0/16 --set kubeProxyReplacement=true --set k8sServiceHost=\${SERVER_IP} --set k8sServicePort=6443
+  # Tunnel mode required for LXC containers (native mode has connectivity issues)
+  cilium install --set routingMode=tunnel --set kubeProxyReplacement=true --set k8sServiceHost=\${SERVER_IP} --set k8sServicePort=6443
   echo 'Waiting for Cilium to be ready...'
   cilium status --wait
 "
